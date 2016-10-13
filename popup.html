@@ -25,9 +25,9 @@
 <body>
     <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
 
-        <header class="mdl-layout__header mdl-color-text--white mdl-color--light-purple-700">
+        <header class="mdl-layout__header mdl-color-text--white mdl-color--mountain">
             <div class="mdl-layout__header-row">
-                <span class="mdl-layout__title">Fixed drawer layout demo</span>
+                <span class="mdl-layout__title">PasteIt</span>
             </div>
             <div id="button-container">
 
@@ -40,19 +40,19 @@
             </div>
         </header>
 
-        <div class="mdl-layout__drawer">
-            <div id="user" class="mdl-layout__title mdl-color-text--white mdl-color--deep-purple-700">
-                <div id="user-container">
-                    <div id="user-pic">
-                        <img src="./images/profile_placeholder.png" />
-                    </div>
-                    <div id="user-name">Nikhil WArke</div>
-                </div>
+        <div class="demo-drawer mdl-layout__drawer mdl-color--mountain mdl-color-text--blue-grey-50">
+          <header class="demo-drawer-header">
+            <div id="user-pic" class="demo-avatar">
+            <img src="./images/profile_placeholder.png">
+          </div>
+            <div id="user-name" class="demo-avatar-dropdown">
+              <span>Nikhil Warke</span>
+              </ul>
             </div>
-            <!-- <span class="mdl-layout__title">Hello</span> -->
-            <nav class="mdl-navigation">
-                <a class="mdl-navigation__link" href="#">Phone</a>
-            </nav>
+          </header>
+          <nav class="demo-navigation mdl-navigation mdl-color--scrub">
+            <a class="mdl-navigation__link" href=""><i class="material-icons" role="phone">phone</i>Phone</a>
+          </nav>
         </div>
 
         <!-- Main content holder -->
@@ -62,25 +62,12 @@
                 <div id="message-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
                     <div class="mdl-card__supporting-text mdl-color-text--grey-600">
                         <div id="messages">
-
-                            <!-- TEST CODE -->
-                            <div id="-ABCD">
-                                <div class="message-container">
-                                    <div class="spacing">
-                                        <div class="pic"></div>
-                                    </div>
-                                    <div class="message">I'm blackie</div>
-                                    <div class="name">Black Bird</div>
-                                </div>
-                            </div>
-                            <!-- TEST CODE -->
-
                             <span id="message-filler"></span>
                         </div>
                         <form id="message-form" action="#">
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                                 <input class="mdl-textfield__input" type="text" id="message">
-                                <label class="mdl-textfield__label" for="message">Message...</label>
+                                <label class="mdl-textfield__label" for="message">Paste Your Message</label>
                             </div>
                             <button id="submit" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
                               Send
