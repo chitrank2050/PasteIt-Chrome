@@ -24,6 +24,8 @@ var config = {
     messagingSenderId: "211858817320"
 };
 
+var MAX_MSG_LIMIT = 12;
+
 // Initializes FriendlyChat.
 function FriendlyChat() {
     this.checkSetup();
@@ -63,7 +65,6 @@ function FriendlyChat() {
 
 // Sets up shortcuts to Firebase features and initiate firebase auth.
 FriendlyChat.prototype.initFirebase = function() {
-    // TODO(DEVELOPER): Initialize Firebase.
     // Shortcuts for Firebase SDK features.
     this.auth = firebase.auth();
     this.database = firebase.database();
@@ -84,8 +85,8 @@ FriendlyChat.prototype.loadMessages = function() {
         var val = data.val();
         this.displayMessage(data.key, val.name, val.text, val.photoUrl, val.imageUrl);
     }.bind(this);
-    this.messagesRef.limitToLast(12).on('child_added', setMessage);
-    this.messagesRef.limitToLast(12).on('child_changed', setMessage);
+    this.messagesRef.limitToLast(MAX_MSG_LIMIT).on('child_added', setMessage);
+    this.messagesRef.limitToLast(MAX_MSG_LIMIT).on('child_changed', setMessage);
 };
 
 // Saves a new message on the Firebase DB.
@@ -118,39 +119,41 @@ FriendlyChat.prototype.setImageUrl = function(imageUri, imgElement) {
 
 // Saves a new message containing an image URI in Firebase.
 // This first saves the image in Firebase storage.
-FriendlyChat.prototype.saveImageMessage = function(event) {
-    var file = event.target.files[0];
-
-    // Clear the selection in the file picker input.
-    this.imageForm.reset();
-
-    // Check if the file is an image.
-    if (!file.type.match('image.*')) {
-        var data = {
-            message: 'You can only share images',
-            timeout: 2000
-        };
-        this.signInSnackbar.MaterialSnackbar.showSnackbar(data);
-        return;
-    }
-    // Check if the user is signed-in
-    if (this.checkSignedInWithMessage()) {
-
-        // TODO(DEVELOPER): Upload image to Firebase storage and add message.
-
-    }
-};
+// FriendlyChat.prototype.saveImageMessage = function(event) {
+//     var file = event.target.files[0];
+//
+//     // Clear the selection in the file picker input.
+//     this.imageForm.reset();
+//
+//     // Check if the file is an image.
+//     if (!file.type.match('image.*')) {
+//         var data = {
+//             message: 'You can only share images',
+//             timeout: 2000
+//         };
+//         this.signInSnackbar.MaterialSnackbar.showSnackbar(data);
+//         return;
+//     }
+//     // Check if the user is signed-in
+//     if (this.checkSignedInWithMessage()) {
+//
+//         // TODO(DEVELOPER): Upload image to Firebase storage and add message.
+//
+//     }
+// };
 
 // Signs-in Friendly Chat.
 FriendlyChat.prototype.signIn = function() {
-    // TODO(DEVELOPER): Sign in Firebase with credential from the Google user.
+    // Sign in Firebase with credential from the Google user.
+    // TODO: Change auth mode to signInWithCredential()
+    // https://firebase.googleblog.com/2016/08/how-to-use-firebase-in-chrome-extension.html
     var provider = new firebase.auth.GoogleAuthProvider();
     this.auth.signInWithPopup(provider);
 };
 
 // Signs-out of Friendly Chat.
 FriendlyChat.prototype.signOut = function() {
-    // TODO(DEVELOPER): Sign out of Firebase.
+    // Sign out of Firebase.
     this.auth.signOut();
 };
 
@@ -158,8 +161,8 @@ FriendlyChat.prototype.signOut = function() {
 FriendlyChat.prototype.onAuthStateChanged = function(user) {
     if (user) { // User is signed in!
         // Get profile pic and user's name from the Firebase user object.
-        var profilePicUrl = user.photoURL; // TODO(DEVELOPER): Get profile pic.
-        var userName = user.displayName; // TODO(DEVELOPER): Get user's name.
+        var profilePicUrl = user.photoURL;
+        var userName = user.displayName;
 
         // Set the user's profile pic and name.
         this.userPic.style.backgroundImage = 'url(' + profilePicUrl + ')';
@@ -188,7 +191,7 @@ FriendlyChat.prototype.onAuthStateChanged = function(user) {
 
 // Returns true if user is signed-in. Otherwise false and displays a message.
 FriendlyChat.prototype.checkSignedInWithMessage = function() {
-    /* TODO(DEVELOPER): Check if user is signed-in Firebase. */
+    /* Check if user is signed-in Firebase. */
     if (this.auth.currentUser) {
         return true;
     }
@@ -238,15 +241,16 @@ FriendlyChat.prototype.displayMessage = function(key, name, text, picUrl, imageU
         messageElement.textContent = text;
         // Replace all line breaks by <br>.
         messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-    } else if (imageUri) { // If the message is an image.
-        var image = document.createElement('img');
-        image.addEventListener('load', function() {
-            this.messageList.scrollTop = this.messageList.scrollHeight;
-        }.bind(this));
-        this.setImageUrl(imageUri, image);
-        messageElement.innerHTML = '';
-        messageElement.appendChild(image);
     }
+    // else if (imageUri) { // If the message is an image.
+    //     var image = document.createElement('img');
+    //     image.addEventListener('load', function() {
+    //         this.messageList.scrollTop = this.messageList.scrollHeight;
+    //     }.bind(this));
+    //     this.setImageUrl(imageUri, image);
+    //     messageElement.innerHTML = '';
+    //     messageElement.appendChild(image);
+    // }
     // Show the card fading-in.
     setTimeout(function() {
         div.classList.add('visible')

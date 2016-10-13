@@ -16,6 +16,6 @@
         "activeTab",
         "identity"
     ],
-    "version": "0.0.1",
+    "version": "0.0.15",
     "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
 }
