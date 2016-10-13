@@ -1,0 +1,21 @@
+{
+    "author": "Nikhil Warke",
+    "browser_action": {
+        "default_icon": "images/icon.png",
+        "default_popup": "popup.html"
+    },
+    "description": "Companion App for PasteIt",
+    "icons": {
+        "128": "images/iconStore.png",
+        "16": "images/icon.png",
+        "48": "images/iconLauncher.png"
+    },
+    "manifest_version": 2,
+    "name": "PasteIt",
+    "permissions": [
+        "activeTab",
+        "identity"
+    ],
+    "version": "0.0.1",
+    "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
+}
