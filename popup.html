@@ -25,13 +25,12 @@
 <body>
     <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
 
-        <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
+        <header class="mdl-layout__header mdl-color-text--white mdl-color--light-purple-700">
             <div class="mdl-layout__header-row">
                 <span class="mdl-layout__title">Fixed drawer layout demo</span>
             </div>
-            <div id="user-container">
-                <div hidden id="user-pic"></div>
-                <div hidden id="user-name"></div>
+            <div id="button-container">
+
                 <button hidden id="sign-out" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
                   Sign-out
                 </button>
@@ -42,7 +41,15 @@
         </header>
 
         <div class="mdl-layout__drawer">
-            <span class="mdl-layout__title">Material Design Lite</span>
+            <div id="user" class="mdl-layout__title mdl-color-text--white mdl-color--deep-purple-700">
+                <div id="user-container">
+                    <div id="user-pic">
+                        <img src="./images/profile_placeholder.png" />
+                    </div>
+                    <div id="user-name">Nikhil WArke</div>
+                </div>
+            </div>
+            <!-- <span class="mdl-layout__title">Hello</span> -->
             <nav class="mdl-navigation">
                 <a class="mdl-navigation__link" href="#">Phone</a>
             </nav>
@@ -60,7 +67,7 @@
                             <div id="-ABCD">
                                 <div class="message-container">
                                     <div class="spacing">
-                                        <div class="pic">"/home/nick/Downloads/black.png"</div>
+                                        <div class="pic"></div>
                                     </div>
                                     <div class="message">I'm blackie</div>
                                     <div class="name">Black Bird</div>
