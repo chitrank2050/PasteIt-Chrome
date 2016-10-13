@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+
+<head>
+    <!-- Title -->
+
+    <title>PasteIt</title>
+    <!-- Imports -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+    <link rel="stylesheet" href="styles/material.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- <link rel="stylesheet" href="styles/firebase.css"> -->
+    <script src="scripts/material.min.js"></script>
+    <script src="scripts/popup.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+
+</head>
+
+
+<body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout__title">Fixed drawer layout demo</span>
+            </div>
+        </header>
+        <div class="mdl-layout__drawer">
+            <span class="mdl-layout__title">Material Design Lite</span>
+            <nav class="mdl-navigation">
+                <a class="mdl-navigation__link" href="#">Phone</a>
+            </nav>
+        </div>
+        <main class="mdl-layout__content mdl-color--grey-100">
+            <div id="messages-card-container" class="mdl-cell">
+                <div id="message-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+                  <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+                    <div id="messages">
+                            <span id="message-filler"></span>
+                        </div>
+                        <form id="message-form" action="#">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="text" id="message">
+                                <label class="mdl-textfield__label" for="message">Message...</label>
+                            </div>
+                            <button id="submit" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                              Send
+                            </button>
+                        </form>
+                  </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase-app.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase-auth.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase-database.js"></script>
+    <script src="scripts/popup.js"></script>
+</body>
+
+</html>
