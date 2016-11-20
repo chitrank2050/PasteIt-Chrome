@@ -10,6 +10,9 @@
         "16": "images/icon.png",
         "48": "images/iconLauncher.png"
     },
+    "background": {
+      "scripts": ["scripts/popup.js"]
+    },
     "manifest_version": 2,
     "name": "PasteIt",
     "permissions": [
