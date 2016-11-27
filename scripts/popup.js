@@ -17,11 +17,11 @@
 
 // config variable from firebase console
 var config = {
-    apiKey: "AIzaSyANd-RyY-wiY3VlAudpqvpzNNKtO5edIoA",
-    authDomain: "friendlychat-3214e.firebaseapp.com",
-    databaseURL: "https://friendlychat-3214e.firebaseio.com",
-    storageBucket: "friendlychat-3214e.appspot.com",
-    messagingSenderId: "211858817320"
+    apiKey: "AIzaSyDo8JPYxtypGEuNsXwkAEszoW5Sjr6z9Fs",
+    authDomain: "pasteit-84c04.firebaseapp.com",
+    databaseURL: "https://pasteit-84c04.firebaseio.com",
+    storageBucket: "pasteit-84c04.appspot.com",
+    messagingSenderId: "97814606005"
 };
 
 var MAX_MSG_LIMIT = 12;
