@@ -76,7 +76,7 @@ FriendlyChat.prototype.initFirebase = function() {
 // Loads chat messages history and listens for upcoming ones.
 FriendlyChat.prototype.loadMessages = function() {
     // Reference to the /messages/ database path.
-    this.messagesRef = this.database.ref('messages');
+    this.messagesRef = this.database.ref('clip_items/' + this.currentUser.email);
     // Make sure we remove all previous listeners.
     this.messagesRef.off();
 
@@ -97,9 +97,11 @@ FriendlyChat.prototype.saveMessage = function(e) {
         var currentUser = this.auth.currentUser;
         // Add a new message entry to the Firebase Database.
         this.messagesRef.push({
-            name: currentUser.displayName,
-            text: this.messageInput.value,
-            photoUrl: currentUser.photoURL || '/images/profile_placeholder.png'
+            clip: this.messageInput.value,
+            sender_email: currentUser.displayName,
+            sender_device: "CHROME",
+            timestamp: (new Date()).getTime()
+                // photoUrl : currentUser.photoURL || '/images/profile_placeholder.png'
         }).then(function() {
             // Clear message text field and SEND button state.
             FriendlyChat.resetMaterialTextfield(this.messageInput);
@@ -148,7 +150,17 @@ FriendlyChat.prototype.signIn = function() {
     // TODO: Change auth mode to signInWithCredential()
     // https://firebase.googleblog.com/2016/08/how-to-use-firebase-in-chrome-extension.html
     var provider = new firebase.auth.GoogleAuthProvider();
-    this.auth.signInWithPopup(provider);
+    this.auth.signInWithPopup(provider)
+        .catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorMessage);
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+        });
 };
 
 // Signs-out of Friendly Chat.
@@ -157,12 +169,22 @@ FriendlyChat.prototype.signOut = function() {
     this.auth.signOut();
 };
 
+FriendlyChat.prototype.writeUserData = function(userId, name, email) {
+    this.database.ref('users/' + userId).set({
+        name: name,
+        email: email,
+        chrome: true
+    });
+
+};
+
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 FriendlyChat.prototype.onAuthStateChanged = function(user) {
     if (user) { // User is signed in!
         // Get profile pic and user's name from the Firebase user object.
         var profilePicUrl = user.photoURL;
         var userName = user.displayName;
+        var email = user.email;
 
         // Set the user's profile pic and name.
         this.userPic.style.backgroundImage = 'url(' + profilePicUrl + ')';
@@ -175,6 +197,9 @@ FriendlyChat.prototype.onAuthStateChanged = function(user) {
 
         // Hide sign-in button.
         this.signInButton.setAttribute('hidden', 'true');
+
+        // Add User
+        this.writeUserData(user.uid, userName, email);
 
         // We load currently existing chant messages.
         this.loadMessages();
