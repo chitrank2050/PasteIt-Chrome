@@ -33,8 +33,8 @@ var chromeImgUrl = '/images/chip_browser.png';
 var phoneImgUrl = '/images/chip_phone.png';
 var placeHolderImgUrl = '/images/profile_placeholder.png';
 
-// Initializes FriendlyChat.
-function FriendlyChat() {
+// Initializes PasteIt.
+function PasteIt() {
     this.checkSetup();
 
     // Shortcuts to DOM Elements.
@@ -65,7 +65,7 @@ function FriendlyChat() {
 }
 
 // Sets up shortcuts to Firebase features and initiate firebase auth.
-FriendlyChat.prototype.initFirebase = function() {
+PasteIt.prototype.initFirebase = function() {
     // Shortcuts for Firebase SDK features.
     this.auth = firebase.auth();
     this.database = firebase.database();
@@ -75,7 +75,7 @@ FriendlyChat.prototype.initFirebase = function() {
 };
 
 // Loads chat messages history and listens for upcoming ones.
-FriendlyChat.prototype.loadMessages = function() {
+PasteIt.prototype.loadMessages = function() {
     // Reference to the /messages/ database path.
     this.messagesRef = this.database.ref('messages');
     // Make sure we remove all previous listeners.
@@ -91,7 +91,7 @@ FriendlyChat.prototype.loadMessages = function() {
 };
 
 // Saves a new message on the Firebase DB.
-FriendlyChat.prototype.saveMessage = function(e) {
+PasteIt.prototype.saveMessage = function(e) {
     e.preventDefault();
     // Check that the user entered a message and is signed in.
     if (this.messageInput.value && this.checkSignedInWithMessage()) {
@@ -107,7 +107,7 @@ FriendlyChat.prototype.saveMessage = function(e) {
         };
         this.messagesRef.push(message).then(function() {
             // Clear message text field and SEND button state.
-            FriendlyChat.resetMaterialTextfield(this.messageInput);
+            PasteIt.resetMaterialTextfield(this.messageInput);
             this.toggleButton();
         }.bind(this)).catch(function(error) {
             console.error('Error writing new message to Firebase Database', error);
@@ -116,7 +116,7 @@ FriendlyChat.prototype.saveMessage = function(e) {
 };
 
 // Signs-in Friendly Chat.
-FriendlyChat.prototype.signIn = function() {
+PasteIt.prototype.signIn = function() {
     // Sign in Firebase with credential from the Google user.
     // TODO: Change auth mode to signInWithCredential()
     // https://firebase.googleblog.com/2016/08/how-to-use-firebase-in-chrome-extension.html
@@ -131,13 +131,13 @@ FriendlyChat.prototype.signIn = function() {
 };
 
 // Signs-out of Friendly Chat.
-FriendlyChat.prototype.signOut = function() {
+PasteIt.prototype.signOut = function() {
     // Sign out of Firebase.
     this.auth.signOut();
 };
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
-FriendlyChat.prototype.onAuthStateChanged = function(user) {
+PasteIt.prototype.onAuthStateChanged = function(user) {
     if (user) { // User is signed in!
 
         var profilePicUrl = placeHolderImgUrl;
@@ -175,7 +175,7 @@ FriendlyChat.prototype.onAuthStateChanged = function(user) {
 };
 
 // Returns true if user is signed-in. Otherwise false and displays a message.
-FriendlyChat.prototype.checkSignedInWithMessage = function() {
+PasteIt.prototype.checkSignedInWithMessage = function() {
     /* Check if user is signed-in Firebase. */
     if (this.auth.currentUser) {
         return true;
@@ -190,13 +190,13 @@ FriendlyChat.prototype.checkSignedInWithMessage = function() {
 };
 
 // Resets the given MaterialTextField.
-FriendlyChat.resetMaterialTextfield = function(element) {
+PasteIt.resetMaterialTextfield = function(element) {
     element.value = '';
     element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
 };
 
 // Template for messages.
-FriendlyChat.MESSAGE_TEMPLATE =
+PasteIt.MESSAGE_TEMPLATE =
     '<div class="message-container">' +
     '<div class="spacing"><div class="pic"></div></div>' +
     '<div class="message"></div>' +
@@ -204,15 +204,15 @@ FriendlyChat.MESSAGE_TEMPLATE =
     '</div>';
 
 // A loading image URL.
-FriendlyChat.LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif';
+PasteIt.LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif';
 
 // Displays a Message in the UI.
-FriendlyChat.prototype.displayMessage = function(key, sender, text, email, timestamp) {
+PasteIt.prototype.displayMessage = function(key, sender, text, email, timestamp) {
     var div = document.getElementById(key);
     // If an element for that message does not exists yet we create it.
     if (!div) {
         var container = document.createElement('div');
-        container.innerHTML = FriendlyChat.MESSAGE_TEMPLATE;
+        container.innerHTML = PasteIt.MESSAGE_TEMPLATE;
         div = container.firstChild;
         div.setAttribute('id', key);
         this.messageList.appendChild(div);
@@ -246,7 +246,7 @@ FriendlyChat.prototype.displayMessage = function(key, sender, text, email, times
 
 // Enables or disables the submit button depending on the values of the input
 // fields.
-FriendlyChat.prototype.toggleButton = function() {
+PasteIt.prototype.toggleButton = function() {
     if (this.messageInput.value) {
         this.submitButton.removeAttribute('disabled');
     } else {
@@ -255,7 +255,7 @@ FriendlyChat.prototype.toggleButton = function() {
 };
 
 // Checks that the Firebase SDK has been correctly setup and configured.
-FriendlyChat.prototype.checkSetup = function() {
+PasteIt.prototype.checkSetup = function() {
     if (!firebase || !(firebase.app instanceof Function) || !config) {
         window.alert('You have not configured and imported the Firebase SDK. ' +
             'Make sure you go through the codelab setup instructions.');
@@ -272,5 +272,5 @@ FriendlyChat.prototype.checkSetup = function() {
 window.onload = function() {
     firebase.initializeApp(config);
     console.log(firebase);
-    window.friendlyChat = new FriendlyChat();
+    window.friendlyChat = new PasteIt();
 };
