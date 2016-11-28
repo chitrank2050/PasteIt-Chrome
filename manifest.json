@@ -11,7 +11,7 @@
         "48": "images/iconLauncher.png"
     },
     "background": {
-      "scripts": ["scripts/popup.js"]
+      "scripts": ["scripts/timeago.min.js", "scripts/popup.js"]
     },
     "manifest_version": 2,
     "name": "PasteIt",

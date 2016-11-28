@@ -135,7 +135,7 @@ main, #messages-card {
     padding: 5px 0 5px 10px;
 }
 
-.message-container .name {
+.message-container .time {
     display: inline-block;
     width: 100%;
     padding-left: 40px;

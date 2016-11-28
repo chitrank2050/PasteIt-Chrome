@@ -17,14 +17,21 @@
 
 // config variable from firebase console
 var config = {
-    apiKey: "AIzaSyANd-RyY-wiY3VlAudpqvpzNNKtO5edIoA",
-    authDomain: "friendlychat-3214e.firebaseapp.com",
-    databaseURL: "https://friendlychat-3214e.firebaseio.com",
-    storageBucket: "friendlychat-3214e.appspot.com",
-    messagingSenderId: "211858817320"
-};
+    apiKey: "AIzaSyDo8JPYxtypGEuNsXwkAEszoW5Sjr6z9Fs",
+    authDomain: "pasteit-84c04.firebaseapp.com",
+    databaseURL: "https://pasteit-84c04.firebaseio.com",
+    storageBucket: "pasteit-84c04.appspot.com",
+    messagingSenderId: "97814606005"
+  };
 
 var MAX_MSG_LIMIT = 12;
+
+var ANONYMOUS = 'ANONYMOUS';
+var CHROME = 'CHROME';
+var PHONE = 'PHONE';
+var chromeImgUrl = '/images/chip_browser.png';
+var phoneImgUrl = '/images/chip_phone.png';
+var placeHolderImgUrl = '/images/profile_placeholder.png';
 
 // Initializes FriendlyChat.
 function FriendlyChat() {
@@ -77,7 +84,7 @@ FriendlyChat.prototype.loadMessages = function() {
     // Loads the last 12 messages and listen for new ones.
     var setMessage = function(data) {
         var val = data.val();
-        this.displayMessage(data.key, val.name, val.text, val.photoUrl, val.imageUrl);
+        this.displayMessage(data.key, val.sender_device, val.clip, val.sender_email, val.timestamp);
     }.bind(this);
     this.messagesRef.limitToLast(MAX_MSG_LIMIT).on('child_added', setMessage);
     this.messagesRef.limitToLast(MAX_MSG_LIMIT).on('child_changed', setMessage);
@@ -89,14 +96,15 @@ FriendlyChat.prototype.saveMessage = function(e) {
     // Check that the user entered a message and is signed in.
     if (this.messageInput.value && this.checkSignedInWithMessage()) {
         var currentUser = this.auth.currentUser;
+        var timestamp = Date.now();
         // Add a new message entry to the Firebase Database.
         var message = {
-          clip : this.messageInput.value,
-          email : currentUser.email,
-          sender_device : "CHROME",
-          timestamp = (new Date()).getTime()
-          // photoUrl: currentUser.photoURL || '/images/profile_placeholder.png'
-        }
+            clip: this.messageInput.value,
+            email: currentUser.email,
+            sender_device: CHROME,
+            timestamp: timestamp
+                // photoUrl: currentUser.photoURL || '/images/profile_placeholder.png'
+        };
         this.messagesRef.push(message).then(function() {
             // Clear message text field and SEND button state.
             FriendlyChat.resetMaterialTextfield(this.messageInput);
@@ -112,8 +120,14 @@ FriendlyChat.prototype.signIn = function() {
     // Sign in Firebase with credential from the Google user.
     // TODO: Change auth mode to signInWithCredential()
     // https://firebase.googleblog.com/2016/08/how-to-use-firebase-in-chrome-extension.html
-    var provider = new firebase.auth.GoogleAuthProvider();
-    this.auth.signInWithPopup(provider);
+    // var provider = new firebase.auth.GoogleAuthProvider();
+    // this.auth.signInWithPopup(provider);
+    firebase.auth().signInAnonymously().catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // ...
+    });
 };
 
 // Signs-out of Friendly Chat.
@@ -125,12 +139,18 @@ FriendlyChat.prototype.signOut = function() {
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 FriendlyChat.prototype.onAuthStateChanged = function(user) {
     if (user) { // User is signed in!
+
+        var profilePicUrl = placeHolderImgUrl;
+        var userName = ANONYMOUS;
+
         // Get profile pic and user's name from the Firebase user object.
-        var profilePicUrl = user.photoURL;
-        var userName = user.displayName;
+        if (!user.isAnonymous) {
+            profilePicUrl = user.photoURL;
+            userName = user.displayName;
+        }
 
         // Set the user's profile pic and name.
-        this.userPic.style.backgroundImage = 'url(' + profilePicUrl + ')';
+        this.userPic.firstElementChild.src = profilePicUrl;
         this.userName.textContent = userName;
 
         // Show user's profile and sign-out button.
@@ -180,14 +200,14 @@ FriendlyChat.MESSAGE_TEMPLATE =
     '<div class="message-container">' +
     '<div class="spacing"><div class="pic"></div></div>' +
     '<div class="message"></div>' +
-    '<div class="name"></div>' +
+    '<div class="time"></div>' +
     '</div>';
 
 // A loading image URL.
 FriendlyChat.LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif';
 
 // Displays a Message in the UI.
-FriendlyChat.prototype.displayMessage = function(key, name, text, picUrl, imageUri) {
+FriendlyChat.prototype.displayMessage = function(key, sender, text, email, timestamp) {
     var div = document.getElementById(key);
     // If an element for that message does not exists yet we create it.
     if (!div) {
@@ -197,10 +217,19 @@ FriendlyChat.prototype.displayMessage = function(key, name, text, picUrl, imageU
         div.setAttribute('id', key);
         this.messageList.appendChild(div);
     }
-    if (picUrl) {
-        div.querySelector('.pic').style.backgroundImage = 'url(' + picUrl + ')';
+
+    var picUrl = null;
+    if (sender === CHROME) {
+        picUrl = chromeImgUrl;
+    } else if (sender === PHONE) {
+        picUrl = phoneImgUrl;
+    } else {
+        picUrl = this.auth.currentUser.photoURL;
     }
-    div.querySelector('.name').textContent = name;
+    div.querySelector('.pic').style.backgroundImage = 'url(' + picUrl + ')';
+
+    div.querySelector('.time').textContent = jQuery.timeago(new Date(timestamp));
+
     var messageElement = div.querySelector('.message');
     if (text) { // If the message is text.
         messageElement.textContent = text;
