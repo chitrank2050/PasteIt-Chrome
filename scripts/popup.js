@@ -54,12 +54,6 @@ function FriendlyChat() {
     this.messageInput.addEventListener('keyup', buttonTogglingHandler);
     this.messageInput.addEventListener('change', buttonTogglingHandler);
 
-    // Events for image upload.
-    // this.submitImageButton.addEventListener('click', function() {
-    //     this.mediaCapture.click();
-    // }.bind(this));
-    // this.mediaCapture.addEventListener('change', this.saveImageMessage.bind(this));
-
     this.initFirebase();
 }
 
@@ -96,11 +90,14 @@ FriendlyChat.prototype.saveMessage = function(e) {
     if (this.messageInput.value && this.checkSignedInWithMessage()) {
         var currentUser = this.auth.currentUser;
         // Add a new message entry to the Firebase Database.
-        this.messagesRef.push({
-            name: currentUser.displayName,
-            text: this.messageInput.value,
-            photoUrl: currentUser.photoURL || '/images/profile_placeholder.png'
-        }).then(function() {
+        var message = {
+          clip : this.messageInput.value,
+          email : currentUser.email,
+          sender_device : "CHROME",
+          timestamp = (new Date()).getTime()
+          // photoUrl: currentUser.photoURL || '/images/profile_placeholder.png'
+        }
+        this.messagesRef.push(message).then(function() {
             // Clear message text field and SEND button state.
             FriendlyChat.resetMaterialTextfield(this.messageInput);
             this.toggleButton();
@@ -109,38 +106,6 @@ FriendlyChat.prototype.saveMessage = function(e) {
         });
     }
 };
-
-// Sets the URL of the given img element with the URL of the image stored in Firebase Storage.
-FriendlyChat.prototype.setImageUrl = function(imageUri, imgElement) {
-    imgElement.src = imageUri;
-
-    // TODO(DEVELOPER): If image is on Firebase Storage, fetch image URL and set img element's src.
-};
-
-// Saves a new message containing an image URI in Firebase.
-// This first saves the image in Firebase storage.
-// FriendlyChat.prototype.saveImageMessage = function(event) {
-//     var file = event.target.files[0];
-//
-//     // Clear the selection in the file picker input.
-//     this.imageForm.reset();
-//
-//     // Check if the file is an image.
-//     if (!file.type.match('image.*')) {
-//         var data = {
-//             message: 'You can only share images',
-//             timeout: 2000
-//         };
-//         this.signInSnackbar.MaterialSnackbar.showSnackbar(data);
-//         return;
-//     }
-//     // Check if the user is signed-in
-//     if (this.checkSignedInWithMessage()) {
-//
-//         // TODO(DEVELOPER): Upload image to Firebase storage and add message.
-//
-//     }
-// };
 
 // Signs-in Friendly Chat.
 FriendlyChat.prototype.signIn = function() {
@@ -242,16 +207,7 @@ FriendlyChat.prototype.displayMessage = function(key, name, text, picUrl, imageU
         // Replace all line breaks by <br>.
         messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
     }
-    // else if (imageUri) { // If the message is an image.
-    //     var image = document.createElement('img');
-    //     image.addEventListener('load', function() {
-    //         this.messageList.scrollTop = this.messageList.scrollHeight;
-    //     }.bind(this));
-    //     this.setImageUrl(imageUri, image);
-    //     messageElement.innerHTML = '';
-    //     messageElement.appendChild(image);
-    // }
-    // Show the card fading-in.
+
     setTimeout(function() {
         div.classList.add('visible')
     }, 1);
