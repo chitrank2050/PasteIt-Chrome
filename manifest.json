@@ -11,14 +11,16 @@
         "48": "images/iconLauncher.png"
     },
     "background": {
-      "scripts": ["scripts/timeago.min.js", "scripts/popup.js"]
+        "scripts": ["scripts/popup.js"]
     },
     "manifest_version": 2,
     "name": "PasteIt",
     "permissions": [
         "activeTab",
-        "identity"
+        "identity",
+        "clipboardWrite",
+        "clipboardRead"
     ],
     "version": "0.0.15",
-    "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
+    "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
 }
