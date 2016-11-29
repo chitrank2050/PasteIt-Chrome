@@ -24,11 +24,15 @@ var config = {
     messagingSenderId: "97814606005"
 };
 
+// Firebase
+var MESSAGES = 'clip_items/';
+var USERS = 'users/';
 var MAX_MSG_LIMIT = 12;
 
 var ANONYMOUS = 'ANONYMOUS';
 var CHROME = 'CHROME';
 var PHONE = 'PHONE';
+var EMAIL = '';
 var chromeImgUrl = './images/chip_browser.png';
 var phoneImgUrl = './images/chip_phone.png';
 var placeHolderImgUrl = './images/profile_placeholder.png';
@@ -61,6 +65,38 @@ function PasteIt() {
     this.messageInput.addEventListener('keyup', buttonTogglingHandler);
     this.messageInput.addEventListener('change', buttonTogglingHandler);
 
+    // Anonymous Login start
+    function getRandomToken() {
+        // E.g. 8 * 32 = 256 bits token
+        var randomPool = new Uint8Array(32);
+        crypto.getRandomValues(randomPool);
+        var hex = '';
+        for (var i = 0; i < randomPool.length; ++i) {
+            hex += randomPool[i].toString(16);
+        }
+        // E.g. db18458e2782b2b77e36769c569e263a53885a9944dd0a861e5064eac16f1a
+        return hex;
+    }
+
+    chrome.storage.sync.get('userid', function(items) {
+        var userid = items.userid;
+        if (userid) {
+            useToken(userid);
+        } else {
+            userid = getRandomToken();
+            chrome.storage.sync.set({
+                userid: userid
+            }, function() {
+                useToken(userid);
+            });
+        }
+
+        function useToken(userid) {
+            EMAIL = userid;
+        }
+    });
+    // End
+
     this.initFirebase();
 }
 
@@ -77,7 +113,8 @@ PasteIt.prototype.initFirebase = function() {
 // Loads chat messages history and listens for upcoming ones.
 PasteIt.prototype.loadMessages = function() {
     // Reference to the /messages/ database path.
-    this.messagesRef = this.database.ref('clip_items/' + this.currentUser.email);
+    // TODO change EMAIL -> this.currentUser.email
+    this.messagesRef = this.database.ref(MESSAGES + EMAIL);
     // Make sure we remove all previous listeners.
     this.messagesRef.off();
 
@@ -142,13 +179,14 @@ PasteIt.prototype.onAuthStateChanged = function(user) {
 
         var profilePicUrl = placeHolderImgUrl;
         var userName = ANONYMOUS;
+        var email = EMAIL;
         // var profilePicUrl = user.photoURL;
         // var userName = user.displayName;
-        // var email = user.email;
 
         if (!user.isAnonymous) {
             profilePicUrl = user.photoURL;
             userName = user.displayName;
+            email = user.email;
         }
 
         // Set the user's profile pic and name.
@@ -179,12 +217,12 @@ PasteIt.prototype.onAuthStateChanged = function(user) {
     }
 };
 
-FriendlyChat.prototype.writeUserData = function(userId, name, email) {
-  this.database.ref('users/' + userId).set({
-    name: name,
-    email: email,
-    chrome: true
-  });
+PasteIt.prototype.writeUserData = function(userId, name, email) {
+    this.database.ref(USERS + userId).set({
+        name: name,
+        email: email,
+        chrome: true
+    });
 };
 
 // Returns true if user is signed-in. Otherwise false and displays a message.
@@ -206,6 +244,29 @@ PasteIt.prototype.checkSignedInWithMessage = function() {
 PasteIt.resetMaterialTextfield = function(element) {
     element.value = '';
     element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
+};
+
+PasteIt.prototype.copyMessage = function(element) {
+    if (element instanceof Node) {
+        try {
+            var copyDiv = document.createElement('span');
+            copyDiv.style.height = '1px';
+            copyDiv.style.lineHeight = '1px';
+            copyDiv.style.fontSize = '1px';
+            copyDiv.contentEditable = true;
+            document.body.appendChild(copyDiv);
+            copyDiv.innerHTML = element.innerHTML;
+            copyDiv.unselectable = "off";
+            copyDiv.focus();
+            document.execCommand('SelectAll');
+            var successful = document.execCommand('Copy', false, null);
+            document.body.removeChild(copyDiv);
+            var msg = successful ? 'successful' : 'unsuccessful';
+            console.log('Copy was ' + msg);
+        } catch (e) {
+            console.error(e);
+        }
+    }
 };
 
 // Template for messages.
@@ -250,6 +311,14 @@ PasteIt.prototype.displayMessage = function(key, sender, text, email, timestamp)
         messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
     }
 
+    div.addEventListener('click', function(e) {
+        // TODO remove log
+        console.log(messageElement + " was clicked");
+        this.copyMessage(messageElement);
+    }.bind(this));
+
+    this.copyMessage(messageElement);
+
     setTimeout(function() {
         div.classList.add('visible')
     }, 1);
@@ -284,5 +353,5 @@ PasteIt.prototype.checkSetup = function() {
 
 window.onload = function() {
     firebase.initializeApp(config);
-    window.friendlyChat = new PasteIt();
+    window.pasteIt = new PasteIt();
 };
