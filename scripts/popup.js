@@ -22,16 +22,16 @@ var config = {
     databaseURL: "https://pasteit-84c04.firebaseio.com",
     storageBucket: "pasteit-84c04.appspot.com",
     messagingSenderId: "97814606005"
-  };
+};
 
 var MAX_MSG_LIMIT = 12;
 
 var ANONYMOUS = 'ANONYMOUS';
 var CHROME = 'CHROME';
 var PHONE = 'PHONE';
-var chromeImgUrl = '/images/chip_browser.png';
-var phoneImgUrl = '/images/chip_phone.png';
-var placeHolderImgUrl = '/images/profile_placeholder.png';
+var chromeImgUrl = './images/chip_browser.png';
+var phoneImgUrl = './images/chip_phone.png';
+var placeHolderImgUrl = './images/profile_placeholder.png';
 
 // Initializes PasteIt.
 function PasteIt() {
@@ -271,6 +271,5 @@ PasteIt.prototype.checkSetup = function() {
 
 window.onload = function() {
     firebase.initializeApp(config);
-    console.log(firebase);
     window.friendlyChat = new PasteIt();
 };
