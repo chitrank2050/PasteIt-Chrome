@@ -77,7 +77,7 @@ PasteIt.prototype.initFirebase = function() {
 // Loads chat messages history and listens for upcoming ones.
 PasteIt.prototype.loadMessages = function() {
     // Reference to the /messages/ database path.
-    this.messagesRef = this.database.ref('messages');
+    this.messagesRef = this.database.ref('clip_items/' + this.currentUser.email);
     // Make sure we remove all previous listeners.
     this.messagesRef.off();
 
@@ -100,7 +100,7 @@ PasteIt.prototype.saveMessage = function(e) {
         // Add a new message entry to the Firebase Database.
         var message = {
             clip: this.messageInput.value,
-            email: currentUser.email,
+            sender_email: currentUser.email,
             sender_device: CHROME,
             timestamp: timestamp
                 // photoUrl: currentUser.photoURL || '/images/profile_placeholder.png'
@@ -142,8 +142,10 @@ PasteIt.prototype.onAuthStateChanged = function(user) {
 
         var profilePicUrl = placeHolderImgUrl;
         var userName = ANONYMOUS;
+        // var profilePicUrl = user.photoURL;
+        // var userName = user.displayName;
+        // var email = user.email;
 
-        // Get profile pic and user's name from the Firebase user object.
         if (!user.isAnonymous) {
             profilePicUrl = user.photoURL;
             userName = user.displayName;
@@ -161,6 +163,9 @@ PasteIt.prototype.onAuthStateChanged = function(user) {
         // Hide sign-in button.
         this.signInButton.setAttribute('hidden', 'true');
 
+        // Add User
+        this.writeUserData(user.uid, userName, email);
+
         // We load currently existing chant messages.
         this.loadMessages();
     } else { // User is signed out!
@@ -172,6 +177,14 @@ PasteIt.prototype.onAuthStateChanged = function(user) {
         // Show sign-in button.
         this.signInButton.removeAttribute('hidden');
     }
+};
+
+FriendlyChat.prototype.writeUserData = function(userId, name, email) {
+  this.database.ref('users/' + userId).set({
+    name: name,
+    email: email,
+    chrome: true
+  });
 };
 
 // Returns true if user is signed-in. Otherwise false and displays a message.
