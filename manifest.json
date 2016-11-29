@@ -21,6 +21,6 @@
         "clipboardWrite",
         "clipboardRead"
     ],
-    "version": "0.0.15",
+    "version": "0.0.16",
     "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
 }
