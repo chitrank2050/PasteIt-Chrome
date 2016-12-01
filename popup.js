@@ -102,8 +102,8 @@ Popup.prototype.onAuthStateChanged = function (user) {
       this.displayName = user.displayName
       this.email = user.email
     } else {
-      this.profilePicUrl = Popup.PROFILE_PLACEHOLDER
-      this.displayName = Popup.ANONYMOUS
+      this.profilePicUrl = this.PROFILE_PLACEHOLDER
+      this.displayName = this.ANONYMOUS
       this.email = user.uid
     }
 
@@ -135,7 +135,7 @@ Popup.prototype.onAuthStateChanged = function (user) {
 // Loads chat messages history and listens for upcoming ones.
 Popup.prototype.loadMessages = function () {
   // TODO change EMAIL -> this.currentUser.email
-  this.messagesRef = this.database.ref(Popup.MESSAGES + Popup.EMAIL)
+  this.messagesRef = this.database.ref(this.MESSAGES + this.EMAIL)
 
   // Loads the last MAX persmissible messages and listen for new ones.
   this.messagesRef.limitToLast(this.MAX_MSG_LIMIT).on('child_added', this.setMessage.bind(this))
@@ -147,19 +147,19 @@ Popup.prototype.displayMessage = function (key, sender, text, email, timestamp) 
     // If an element for that message does not exists yet we create it.
   if (!div) {
     var container = document.createElement('div')
-    container.innerHTML = Popup.MESSAGE_TEMPLATE
+    container.innerHTML = this.MESSAGE_TEMPLATE
     div = container.firstChild
     div.setAttribute('id', key)
     this.messageList.appendChild(div)
   }
 
   var picUrl = null
-  if (sender === Popup.CHROME) {
-    picUrl = Popup.CHIP_CHROME
-  } else if (sender === Popup.PHONE) {
-    picUrl = Popup.CHIP_PHONE
+  if (sender === this.CHROME) {
+    picUrl = this.CHIP_CHROME
+  } else if (sender === this.PHONE) {
+    picUrl = this.CHIP_PHONE
   } else {
-    picUrl = Popup.PROFILE_PLACEHOLDER
+    picUrl = this.PROFILE_PLACEHOLDER
   }
   div.querySelector('.pic').style.backgroundImage = 'url(' + picUrl + ')'
 
@@ -233,7 +233,8 @@ Popup.prototype.sendToBackground = function (command, message, errorMessage) {
       this.showToast(errorMessage)
     } else if (response.message) {
       console.log(response.message)
-      this.showToast(response.message)
+      if(response.message) this.displayMessage(response.message.key, response.message.sender_device, response.message.clip, response.message.sender_email, response.message.timestamp)
+      else this.showToast(response.message)
     }
   }.bind(this))
 }

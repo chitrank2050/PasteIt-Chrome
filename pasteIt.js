@@ -60,21 +60,10 @@ PasteIt.prototype.pushMessage = function (text, sendResponse) {
         // photoUrl: currentUser.photoURL || './images/profile_placeholder.png'
     }
     console.log('message before push: ' + JSON.stringify(message))
-    this.messagesRef.push(message, function (error) {
-      console.log('message after push completed: ' + JSON.stringify(message))
-      if (!error) {
-        sendResponse({
-          success: true,
-          message: message
-        })
-      } else {
-        sendResponse({
-          success: false,
-          message: error.message
-        })
-      }
-    }).catch(function (error) {
-      console.error('Error writing new message to Firebase Database', error)
+    message.key = this.messagesRef.push(message).key
+    sendResponse({
+      success: true,
+      message: message
     })
     console.log('Pushed to firebase')
   } else {
