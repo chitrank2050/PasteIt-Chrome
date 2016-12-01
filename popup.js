@@ -16,17 +16,9 @@
 'use strict'
 
 // Initializes Popup.
-function Popup () {
-  // config variable from firebase console
-  this.config = {
-    apiKey: 'AIzaSyDo8JPYxtypGEuNsXwkAEszoW5Sjr6z9Fs',
-    authDomain: 'pasteit-84c04.firebaseapp.com',
-    databaseURL: 'https://pasteit-84c04.firebaseio.com',
-    storageBucket: 'pasteit-84c04.appspot.com',
-    messagingSenderId: '97814606005'
-  }
-    // Initialize Firebase
-  this.firebaseApp = firebase.initializeApp(this.config)
+function Popup (firebaseApp) {
+  // Initialize Firebase
+  this.firebaseApp = firebaseApp
   this.checkSetup()
 
   // Properties
@@ -134,11 +126,21 @@ Popup.prototype.onAuthStateChanged = function (user) {
 
 // Loads chat messages history and listens for upcoming ones.
 Popup.prototype.loadMessages = function () {
-  // TODO change EMAIL -> this.currentUser.email
-  this.messagesRef = this.database.ref(this.MESSAGES + this.EMAIL)
+  // TODO change email -> this.currentUser.email
+  this.messagesRef = this.database.ref(this.MESSAGES + this.email)
+    // Loads the last MAX persmissible messages and listen for new ones.
+  this.messagesRef.limitToLast(this.MAX_MSG_LIMIT).on('child_added', this.onMessageLoadedListener.bind(this))
+}
 
-  // Loads the last MAX persmissible messages and listen for new ones.
-  this.messagesRef.limitToLast(this.MAX_MSG_LIMIT).on('child_added', this.setMessage.bind(this))
+Popup.prototype.onMessageLoadedListener = function (snapshot) {
+  var clipData = snapshot.val()
+  clipData.key = snapshot.key
+  this.mapDataToView(clipData)
+}
+
+// call displayMessage to display messages from Firebase DataSnapShot
+Popup.prototype.mapDataToView = function (data) {
+  this.displayMessage(data.key, data.sender_device, data.clip, data.sender_email, data.timestamp)
 }
 
 // Displays a Message in the UI.
@@ -214,14 +216,6 @@ Popup.prototype.resetMaterialTextfield = function (element) {
   element.parentNode.MaterialTextfield.boundUpdateClassesHandler()
 }
 
-// call displayMessage to display messages from Firebase DataSnapShot
-Popup.prototype.setMessage = function (data) {
-  var val = data.val()
-  console.log('setMessage:val: ' + JSON.stringify(val))
-  console.log('propertyTest: ' + val.clip)
-  this.displayMessage(data.key, val.sender_device, val.clip, val.sender_email, val.timestamp)
-}
-
 Popup.prototype.sendToBackground = function (command, message, errorMessage) {
   chrome.runtime.sendMessage({
     command: command,
@@ -233,7 +227,7 @@ Popup.prototype.sendToBackground = function (command, message, errorMessage) {
       this.showToast(errorMessage)
     } else if (response.message) {
       console.log(response.message)
-      if(response.message) this.displayMessage(response.message.key, response.message.sender_device, response.message.clip, response.message.sender_email, response.message.timestamp)
+      if (command === 'push') this.mapDataToView(response.message)
       else this.showToast(response.message)
     }
   }.bind(this))
@@ -260,10 +254,10 @@ Popup.prototype.toggleButton = function () {
 
 // Checks that the Firebase SDK has been correctly setup and configured.
 Popup.prototype.checkSetup = function () {
-  if (!this.firebaseApp || !this.config) {
+  if (!this.firebaseApp || !config) {
     window.alert('You have not configured and imported the Firebase SDK. ' +
       'Make sure you go through the codelab setup instructions.')
-  } else if (this.config.storageBucket === '') {
+  } else if (config.storageBucket === '') {
     window.alert('Your Firebase Storage bucket has not been enabled. Sorry about that. This is ' +
       'actually a Firebase bug that occurs rarely. ' +
       'Please go and re-generate the Firebase initialisation snippet (step 4 of the codelab) ' +
@@ -273,11 +267,21 @@ Popup.prototype.checkSetup = function () {
   }
 }
 
+// config variable from firebase console
+var config = {
+  apiKey: 'AIzaSyDo8JPYxtypGEuNsXwkAEszoW5Sjr6z9Fs',
+  authDomain: 'pasteit-84c04.firebaseapp.com',
+  databaseURL: 'https://pasteit-84c04.firebaseio.com',
+  storageBucket: 'pasteit-84c04.appspot.com',
+  messagingSenderId: '97814606005'
+}
+
 window.onload = function () {
-  window.popup = new Popup()
+  var app = firebase.initializeApp(config)
+  window.popup = new Popup(app)
 }
 
 window.unonload = function () {
-  window.popup.messagesRef.off(this.setMessage.bind(this))
-  console.log('popup window unloaded and listener switched off')
+  window.popup.messagesRef.off(this.onMessageLoadedListener.bind(this))
+  window.alert('popup window unloaded and listener switched off')
 }
