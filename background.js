@@ -1,7 +1,6 @@
 'user strict'
 
 var pasteIt
-var app
 
 function initApp (app) {
   pasteIt = new PasteIt(app)
@@ -50,7 +49,7 @@ var config = {
 }
 
 window.onload = function () {
-  app = firebase.initializeApp(config)
+  var app = firebase.initializeApp(config)
   console.log('background.js running')
   initApp(app)
 }
