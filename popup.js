@@ -80,15 +80,16 @@ function Popup (firebaseApp) {
 Popup.prototype.initFirebase = function () {
   // Shortcuts for Firebase SDK features.
   this.database = this.firebaseApp.database()
+  this.auth = this.firebaseApp.auth()
     // Listen to auth state state change.
-  this.firebaseApp.auth().onAuthStateChanged(this.onAuthStateChanged.bind(this))
+  this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this))
 }
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 Popup.prototype.onAuthStateChanged = function (user) {
   if (user) {
     // User is signed in!
-
+    this.userId = user.uid
     if (!user.isAnonymous) {
       this.profilePicUrl = user.photoURL
       this.displayName = user.displayName
@@ -96,7 +97,7 @@ Popup.prototype.onAuthStateChanged = function (user) {
     } else {
       this.profilePicUrl = this.PROFILE_PLACEHOLDER
       this.displayName = this.ANONYMOUS
-      this.email = user.uid
+      this.email = ''
     }
 
     // Set the user's profile pic and name.
@@ -127,20 +128,20 @@ Popup.prototype.onAuthStateChanged = function (user) {
 // Loads chat messages history and listens for upcoming ones.
 Popup.prototype.loadMessages = function () {
   // TODO change email -> this.currentUser.email
-  this.messagesRef = this.database.ref(this.MESSAGES + this.email)
+  this.messagesRef = this.database.ref(this.MESSAGES + this.userId)
     // Loads the last MAX persmissible messages and listen for new ones.
   this.messagesRef.limitToLast(this.MAX_MSG_LIMIT).on('child_added', this.onMessageLoadedListener.bind(this))
 }
 
 Popup.prototype.onMessageLoadedListener = function (snapshot) {
   var clipData = snapshot.val()
-  clipData.key = snapshot.key
   this.mapDataToView(clipData)
 }
 
 // call displayMessage to display messages from Firebase DataSnapShot
 Popup.prototype.mapDataToView = function (data) {
-  this.displayMessage(data.key, data.sender_device, data.clip, data.sender_email, data.timestamp)
+  console.log(data);
+  this.displayMessage(data.id, data.deviceType, data.text, data.senderEmail, data.timestamp)
 }
 
 // Displays a Message in the UI.
@@ -199,9 +200,38 @@ Popup.prototype.saveMessage = function (e) {
   }
 }
 
-// Signs-in PasetIt.
+/**
+ * Starts the sign-in process.
+ */
 Popup.prototype.signIn = function () {
-  this.sendToBackground('signIn', null, 'Sign In Failed. Please check internet connection and try again')
+  this.startAuth(true)
+}
+/**
+ * Start the auth flow and authorizes to Firebase.
+ * @param{boolean} interactive True if the OAuth flow should request with an interactive mode.
+ */
+Popup.prototype.startAuth = function (interactive) {
+  // Request an OAuth token from the Chrome Identity API.
+  chrome.identity.getAuthToken({ interactive: !!interactive }, function (token) {
+    if (chrome.runtime.lastError && !interactive) {
+      console.log('It was not possible to get a token programmatically.')
+    } else if (chrome.runtime.lastError) {
+      console.error(chrome.runtime.lastError)
+    } else if (token) {
+      // Authrorize Firebase with the OAuth Access Token.
+      var credential = firebase.auth.GoogleAuthProvider.credential(null, token)
+      this.auth.signInWithCredential(credential).catch(function (error) {
+        // The OAuth token might have been invalidated. Lets' remove it from cache.
+        if (error.code === 'auth/invalid-credential') {
+          chrome.identity.removeCachedAuthToken({ token: token }, function () {
+            this.startAuth(interactive)
+          })
+        }
+      })
+    } else {
+      console.error('The OAuth Token was null')
+    }
+  }.bind(this))
 }
 
 // Signs-out of Friendly Chat.
@@ -227,8 +257,7 @@ Popup.prototype.sendToBackground = function (command, message, errorMessage) {
       this.showToast(errorMessage)
     } else if (response.message) {
       console.log(response.message)
-      if (command === 'push') this.mapDataToView(response.message)
-      else this.showToast(response.message)
+      this.showToast(response.message)
     }
   }.bind(this))
 }

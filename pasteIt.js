@@ -28,6 +28,7 @@ PasteIt.prototype.onAuthStateChanged = function (user) {
     this.userId = user.uid
     if (!user.isAnonymous) {
       this.email = user.email
+      this.userName = user.displayName
     } else {
       this.email = user.uid
       this.userName = this.ANONYMOUS
@@ -42,6 +43,7 @@ PasteIt.prototype.onAuthStateChanged = function (user) {
 PasteIt.prototype.writeUserData = function () {
   this.database.ref(this.userPath + this.userId).set({
     name: this.userName,
+    id: this.userId,
     email: this.email,
     chrome: true
   })
@@ -52,18 +54,20 @@ PasteIt.prototype.pushMessage = function (text, sendResponse) {
   if (this.auth.currentUser) {
     var timestamp = Date.now()
       // Add a new message entry to the Firebase Database.
+    console.log('message before push: ' + JSON.stringify(message))
+    var newMessageRef = this.messagesRef.push()
+    var key = newMessageRef.key
     var message = {
-      clip: text,
-      sender_email: this.email,
-      sender_device: 'CHROME',
+      id: key,
+      text: text,
+      senderEmail: this.email,
+      deviceType: 'CHROME',
       timestamp: timestamp
         // photoUrl: currentUser.photoURL || './images/profile_placeholder.png'
     }
-    console.log('message before push: ' + JSON.stringify(message))
-    message.key = this.messagesRef.push(message).key
+    newMessageRef.set(message)
     sendResponse({
-      success: true,
-      message: message
+      success: true
     })
     console.log('Pushed to firebase')
   } else {
@@ -107,7 +111,7 @@ PasteIt.prototype.copyMessage = function (message, sendResponse) {
 
 /* Load latest message and listen for future ones */
 PasteIt.prototype.loadLatestMessage = function () {
-  this.messagesRef = this.database.ref(this.messagePath + this.email)
+  this.messagesRef = this.database.ref(this.messagePath + this.userId)
   this.messagesRef.off()
 
   this.messagesRef.limitToLast(1).on('child_added', this.onMessageLoadedListener.bind(this))
@@ -124,15 +128,10 @@ PasteIt.prototype.onMessageLoadedListener = function (data) {
   })
 }
 
-PasteIt.prototype.signIn = function (sendResponse) {
-  // var provider = new firebase.auth.GoogleAuthProvider();
-  // this.auth.signInWithPopup(provider);
-  this.auth.signInAnonymously().catch(function (error) {
+PasteIt.prototype.signIn = function (message, sendResponse) {
+  var credential = firebase.auth.GoogleAuthProvider.credential(message)
+  this.auth.signInWithCredential(credential).catch(function (error) {
     // Handle Errors here.
     console.error(error)
-  })
-  sendResponse({
-    success: true,
-    message: 'User signed in'
   })
 }

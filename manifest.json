@@ -22,5 +22,13 @@
         "clipboardRead"
     ],
     "version": "0.1.0",
-    "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
+    "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
+    "oauth2": {
+        "client_id": "97814606005-r8rmjogkm037taai53k7jc88fj5mh49p.apps.googleusercontent.com",
+        "scopes": [
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/userinfo.profile"
+        ]
+    },
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlYbMf58Msy4IJWXepj1HKY0FaHeoOArzRA+Bn0NVfVHBKpLYYcHcDE9oO3XF6N01gFYfEFv6mOEIGogfa6zArQRdINGYdwifUJyVyd84YXUBi/5Q1btI1u0Djl8cCdIUY3IvWKAeuwKvmKf/A3Ygodn1F7si7DnVES/4QM9a1SiQgoPC23xhJl3CKfYqO59Uv9SB/FKupn8Pxazmf2RUTCcdj5B3eLxtaG/1NdXloij8qOU0mlgFJC5xS9gCL0jDd31v0d6DraH6O6diDbYDV/XvQ9P5zKeK3Fuyfu2m5rc234+b7ffZkcg3jYaOsu0vlCR9wovmXc3urtM1rs0HfwIDAQAB"
 }

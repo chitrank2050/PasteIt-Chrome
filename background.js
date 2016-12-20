@@ -20,9 +20,6 @@ chrome.runtime.onMessage.addListener(
       case 'push':
         pasteIt.pushMessage(request.message, sendResponse)
         break
-      case 'signIn':
-        pasteIt.signIn(sendResponse)
-        break
       case 'isSignedIn':
         sendResponse({
           success: Boolean(pasteIt.auth.currentUser)
