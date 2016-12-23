@@ -54,7 +54,7 @@ PasteIt.prototype.pushMessage = function (text, sendResponse) {
   if (this.auth.currentUser) {
     var timestamp = Date.now()
       // Add a new message entry to the Firebase Database.
-    console.log('message before push: ' + JSON.stringify(message))
+    console.log('message before push: ' + text)
     var newMessageRef = this.messagesRef.push()
     var key = newMessageRef.key
     var message = {
