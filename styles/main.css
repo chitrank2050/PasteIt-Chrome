@@ -16,6 +16,18 @@
     background-color: #C0B3A0 !important
 }
 
+.mdl-color--blue {
+    background-color: #448AFF !important
+}
+
+.mdl-color--yellow {
+    background-color: #FFEE58 !important
+}
+
+.mdl-color--black {
+    background-color: #000 !important
+}
+
 html, body {
     font-family: 'Roboto', 'Helvetica', sans-serif;
 }
@@ -97,7 +109,20 @@ main, #messages-card {
 }
 
 
-/*MESSAGE TEMPLATE CLASS*/
+/*
+███    ███ ███████ ███████ ███████  █████   ██████  ███████
+████  ████ ██      ██      ██      ██   ██ ██       ██
+██ ████ ██ █████   ███████ ███████ ███████ ██   ███ █████
+██  ██  ██ ██           ██      ██ ██   ██ ██    ██ ██
+██      ██ ███████ ███████ ███████ ██   ██  ██████  ███████
+*/
+/*
+████████ ███████ ███    ███ ██████  ██       █████  ████████ ███████
+   ██    ██      ████  ████ ██   ██ ██      ██   ██    ██    ██
+   ██    █████   ██ ████ ██ ██████  ██      ███████    ██    █████
+   ██    ██      ██  ██  ██ ██      ██      ██   ██    ██    ██
+   ██    ███████ ██      ██ ██      ███████ ██   ██    ██    ███████
+*/
 
 .message-container:first-of-type {
     border-top-width: 0;
@@ -146,26 +171,78 @@ main, #messages-card {
 }
 
 
-/*INPUT MESSAGE TEXTFIELD*/
+/*
+██ ███    ██ ██████  ██    ██ ████████
+██ ████   ██ ██   ██ ██    ██    ██
+██ ██ ██  ██ ██████  ██    ██    ██
+██ ██  ██ ██ ██      ██    ██    ██
+██ ██   ████ ██       ██████     ██
+*/
+/*
+███    ███ ███████ ███████ ███████  █████   ██████  ███████
+████  ████ ██      ██      ██      ██   ██ ██       ██
+██ ████ ██ █████   ███████ ███████ ███████ ██   ███ █████
+██  ██  ██ ██           ██      ██ ██   ██ ██    ██ ██
+██      ██ ███████ ███████ ███████ ██   ██  ██████  ███████
+*/
+/*
+████████ ███████ ██   ██ ████████ ███████ ██ ███████ ██      ██████
+   ██    ██       ██ ██     ██    ██      ██ ██      ██      ██   ██
+   ██    █████     ███      ██    █████   ██ █████   ██      ██   ██
+   ██    ██       ██ ██     ██    ██      ██ ██      ██      ██   ██
+   ██    ███████ ██   ██    ██    ██      ██ ███████ ███████ ██████
+*/
 
 #message-form {
     display: flex;
     flex-direction: row;
-    width: calc(100% - 48px);
-    float: left;
+    padding: 0px 10px 0px 10px;
+    background-color: #FFEE58;
+    /*float: left;*/
 }
 
 #message-form .mdl-textfield {
     width: calc(100% - 100px);
 }
 
-#message-form button, #image-form button {
-    width: 100px;
-    margin: 15px 0 0 10px;
+.mdl-textfield__label:after {
+    background-color: #000;
 }
 
+.mdl-textfield__label {
+    color: #000;
+}
 
-/*USER PROFILE CONTAINER*/
+.mdl-textfield__input {
+  color: #000;
+}
+
+.message-form button {
+  color: #000;
+}
+
+/*
+██    ██ ███████ ███████ ██████
+██    ██ ██      ██      ██   ██
+██    ██ ███████ █████   ██████
+██    ██      ██ ██      ██   ██
+ ██████  ███████ ███████ ██   ██
+*/
+/*
+██████  ██████   ██████  ███████ ██ ██      ███████
+██   ██ ██   ██ ██    ██ ██      ██ ██      ██
+██████  ██████  ██    ██ █████   ██ ██      █████
+██      ██   ██ ██    ██ ██      ██ ██      ██
+██      ██   ██  ██████  ██      ██ ███████ ███████
+*/
+
+/*
+██████   ██████  ███    ██ ████████  █████  ██ ███    ██ ███████ ██████
+██      ██    ██ ████   ██    ██    ██   ██ ██ ████   ██ ██      ██   ██
+██      ██    ██ ██ ██  ██    ██    ███████ ██ ██ ██  ██ █████   ██████
+██      ██    ██ ██  ██ ██    ██    ██   ██ ██ ██  ██ ██ ██      ██   ██
+██████   ██████  ██   ████    ██    ██   ██ ██ ██   ████ ███████ ██   ██
+*/
 
 #button-container {
     position: absolute;
@@ -183,14 +260,6 @@ main, #messages-card {
 .message img {
     max-width: 300px;
     max-height: 200px;
-}
-
-.mdl-textfield__label:after {
-    background-color: #0288D1;
-}
-
-.mdl-textfield--floating-label.is-focused .mdl-textfield__label {
-    color: #0288D1;
 }
 
 .mdl-button .material-icons {

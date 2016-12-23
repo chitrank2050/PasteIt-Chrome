@@ -18,7 +18,7 @@
 <body>
     <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
 
-        <header class="mdl-layout__header mdl-color-text--white mdl-color--mountain">
+        <header class="mdl-layout__header mdl-color-text--white mdl-color--black">
             <div class="mdl-layout__header-row">
                 <span class="mdl-layout__title">PasteIt</span>
             </div>
@@ -33,7 +33,7 @@
             </div>
         </header>
 
-        <div class="demo-drawer mdl-layout__drawer mdl-color--mountain mdl-color-text--white">
+        <!-- <div class="demo-drawer mdl-layout__drawer mdl-color--mountain mdl-color-text--white">
             <header class="demo-drawer-header">
                 <div id="user-pic" class="demo-avatar">
                     <img src="./images/profile_placeholder.png">
@@ -44,32 +44,25 @@
             <nav class="demo-navigation mdl-navigation mdl-color--scrub">
                 <a class="mdl-navigation__link" href=""><i class="material-icons" role="phone">phone</i>Phone</a>
             </nav>
-        </div>
+        </div> -->
 
         <!-- Main content holder -->
         <main class="mdl-layout__content mdl-color--grey-100">
-            <div id="messages-card-container" class="mdl-cell mdl-cell mdl-cell--12-col mdl-grid">
-                <!-- Messages Container -->
-                <div id="message-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
-                    <div class="mdl-card__supporting-text mdl-color-text--grey-600">
-                        <div id="messages">
-                            <span id="message-filler"></span>
-                        </div>
-                        <form id="message-form" action="#">
-                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input class="mdl-textfield__input" type="text" id="message">
-                                <label class="mdl-textfield__label" for="message">Paste Your Message</label>
-                            </div>
-                            <button id="submit" disabled type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
-                              Send
-                            </button>
-                        </form>
-                    </div>
+            <div id="messages">
+                <span id="message-filler"></span>
+            </div>
+            <form id="message-form" action="#">
+                <div class="mdl-textfield mdl-js-textfield">
+                    <input class="mdl-textfield__input" type="text" id="message">
+                    <label class="mdl-textfield__label" for="message">Paste here...</label>
                 </div>
-                <div id="must-signin-snackbar" class="mdl-js-snackbar mdl-snackbar">
-                    <div class="mdl-snackbar__text"></div>
-                    <button class="mdl-snackbar__action" type="button"></button>
-                </div>
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+
+                </button>
+            </form>
+            <div id="must-signin-snackbar" class="mdl-js-snackbar mdl-snackbar">
+                <div class="mdl-snackbar__text"></div>
+                <button class="mdl-snackbar__action" type="button"></button>
             </div>
         </main>
     </div>
