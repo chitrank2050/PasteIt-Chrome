@@ -4,7 +4,7 @@ PasteIt extension for Chrome
 
 **PasteIt** is an app that helps to easily copy and paste between your devices.
 
-[![Get it in chrome web store](https://developer.chrome.com/webstore/images/ChromeWebStore_Badge_v2_496x150.png)](https://chrome.google.com/webstore/detail/pasteit/abcdeghi)
+[![Get it in chrome web store](https://developer.chrome.com/webstore/images/ChromeWebStore_Badge_v2_496x150.png)](https://chrome.google.com/webstore/detail/pasteit/hkebmdiodpkoikbpcibofhnepeelpecj)
 
 <!-- #### Screenshot
 ![Screenshot Android](http://url/screenshot-appname-android.png "screenshot Android") -->
