@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+ /* global chrome, jQuery, firebase */
+
 'use strict'
 
 // Initializes Popup.
-function Popup (firebaseApp) {
-  // Initialize Firebase
-  this.firebaseApp = firebaseApp
+function Popup () {
   this.checkSetup()
 
   // Properties
@@ -79,8 +80,8 @@ function Popup (firebaseApp) {
 // Sets up shortcuts to Firebase features and initiate firebase auth.
 Popup.prototype.initFirebase = function () {
   // Shortcuts for Firebase SDK features.
-  this.database = this.firebaseApp.database()
-  this.auth = this.firebaseApp.auth()
+  this.database = firebase.database()
+  this.auth = firebase.auth()
     // Listen to auth state state change.
   this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this))
 }
@@ -140,7 +141,7 @@ Popup.prototype.onMessageLoadedListener = function (snapshot) {
 
 // call displayMessage to display messages from Firebase DataSnapShot
 Popup.prototype.mapDataToView = function (data) {
-  console.log(data);
+  console.log(JSON.stringify(data))
   this.displayMessage(data.id, data.deviceType, data.text, data.senderEmail, data.timestamp)
 }
 
@@ -165,7 +166,6 @@ Popup.prototype.displayMessage = function (key, sender, text, email, timestamp) 
     picUrl = this.PROFILE_PLACEHOLDER
   }
   div.querySelector('.pic').style.backgroundImage = 'url(' + picUrl + ')'
-
   div.querySelector('.time').textContent = jQuery.timeago(new Date(timestamp))
 
   var messageElement = div.querySelector('.message')
@@ -283,7 +283,7 @@ Popup.prototype.toggleButton = function () {
 
 // Checks that the Firebase SDK has been correctly setup and configured.
 Popup.prototype.checkSetup = function () {
-  if (!this.firebaseApp || !config) {
+  if (!window.firebase || !(window.firebase.app instanceof Function) || !config) {
     window.alert('You have not configured and imported the Firebase SDK. ' +
       'Make sure you go through the codelab setup instructions.')
   } else if (config.storageBucket === '') {
@@ -306,11 +306,11 @@ var config = {
 }
 
 window.onload = function () {
-  var app = firebase.initializeApp(config)
-  window.popup = new Popup(app)
+  window.firebase.initializeApp(config)
+  window.popup = new Popup()
 }
 
 window.unonload = function () {
   window.popup.messagesRef.off(this.onMessageLoadedListener.bind(this))
-  window.alert('popup window unloaded and listener switched off')
+  console.log('popup window unloaded and listener switched off')
 }

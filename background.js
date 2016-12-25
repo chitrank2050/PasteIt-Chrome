@@ -1,11 +1,12 @@
+/* global chrome, PasteIt, firebase */
 'user strict'
 
 var pasteIt
 
-function initApp (app) {
-  pasteIt = new PasteIt(app)
+function initApp () {
+  pasteIt = new PasteIt()
   pasteIt.initializeApp()
-  if (pasteIt.USER_ID !== '0000') { console.log('Authentication in background - ' + (pasteIt.signIn().success ? 'successful' : 'unsuccessful')) }
+  console.log('background.js running')
 }
 
 // Controller for various events from Popup
@@ -37,16 +38,16 @@ chrome.runtime.onMessage.addListener(
     }
   })
 
+window.onload = function () {
+  firebase.initializeApp(config)
+  initApp()
+}
+
+// config variable from firebase console
 var config = {
   apiKey: 'AIzaSyDo8JPYxtypGEuNsXwkAEszoW5Sjr6z9Fs',
   authDomain: 'pasteit-84c04.firebaseapp.com',
   databaseURL: 'https://pasteit-84c04.firebaseio.com',
   storageBucket: 'pasteit-84c04.appspot.com',
   messagingSenderId: '97814606005'
-}
-
-window.onload = function () {
-  var app = firebase.initializeApp(config)
-  console.log('background.js running')
-  initApp(app)
 }

@@ -1,4 +1,6 @@
-function PasteIt (firebaseApp) {
+/* global chrome, firebase */
+
+function PasteIt () {
   // User Details
   this.email = this.FAKE_EMAIL
   this.userName = this.ANONYMOUS
@@ -11,15 +13,14 @@ function PasteIt (firebaseApp) {
   // Firebase Database
   this.userPath = 'users/'
   this.messagePath = 'clip_items/'
-
-  this.firebaseApp = firebaseApp
 }
 
 /* Initialize firebase helper objects */
 PasteIt.prototype.initializeApp = function () {
-  this.auth = this.firebaseApp.auth()
-  this.database = this.firebaseApp.database()
+  this.auth = firebase.auth()
+  this.database = firebase.database()
   this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this))
+  this.signIn()
 }
 
 /* Sets user details when user signs in and signs out */
@@ -54,7 +55,7 @@ PasteIt.prototype.pushMessage = function (text, sendResponse) {
   if (this.auth.currentUser) {
     var timestamp = Date.now()
       // Add a new message entry to the Firebase Database.
-    console.log('message before push: ' + JSON.stringify(message))
+    console.log('message to be pushed: ' + JSON.stringify(text))
     var newMessageRef = this.messagesRef.push()
     var key = newMessageRef.key
     var message = {
@@ -128,10 +129,36 @@ PasteIt.prototype.onMessageLoadedListener = function (data) {
   })
 }
 
-PasteIt.prototype.signIn = function (message, sendResponse) {
-  var credential = firebase.auth.GoogleAuthProvider.credential(message)
-  this.auth.signInWithCredential(credential).catch(function (error) {
-    // Handle Errors here.
-    console.error(error)
-  })
+PasteIt.prototype.signIn = function () {
+  this.startAuth(true)
+}
+
+/**
+ * Start the auth flow and authorizes to Firebase.
+ * @param{boolean} interactive True if the OAuth flow should request with an interactive mode.
+ */
+PasteIt.prototype.startAuth = function (interactive) {
+  // Request an OAuth token from the Chrome Identity API.
+  chrome.identity.getAuthToken({ interactive: !!interactive }, function (token) {
+    if (chrome.runtime.lastError && !interactive) {
+      console.log('It was not possible to get a token programmatically.')
+    } else if (chrome.runtime.lastError) {
+      console.error(chrome.runtime.lastError)
+    } else if (token) {
+      // Authrorize Firebase with the OAuth Access Token.
+      var credential = firebase.auth.GoogleAuthProvider.credential(null, token)
+      this.auth.signInWithCredential(credential).then(function (user) {
+        console.log('Authentication in background - ' + ((user) ? 'successful' : 'unsuccessful'))
+      }).catch(function (error) {
+        // The OAuth token might have been invalidated. Lets' remove it from cache.
+        if (error.code === 'auth/invalid-credential') {
+          chrome.identity.removeCachedAuthToken({ token: token }, function () {
+            this.startAuth(interactive)
+          })
+        }
+      })
+    } else {
+      console.error('The OAuth Token was null')
+    }
+  }.bind(this))
 }
