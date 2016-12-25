@@ -9,37 +9,101 @@ function initApp () {
   console.log('background.js running')
 }
 
+/*
+ ██████  ██████  ███    ██ ████████ ███████ ██   ██ ████████     ███    ███ ███████ ███    ██ ██    ██
+██      ██    ██ ████   ██    ██    ██       ██ ██     ██        ████  ████ ██      ████   ██ ██    ██
+██      ██    ██ ██ ██  ██    ██    █████     ███      ██        ██ ████ ██ █████   ██ ██  ██ ██    ██
+██      ██    ██ ██  ██ ██    ██    ██       ██ ██     ██        ██  ██  ██ ██      ██  ██ ██ ██    ██
+ ██████  ██████  ██   ████    ██    ███████ ██   ██    ██        ██      ██ ███████ ██   ████  ██████
+*/
+
+var PHONE_TITLE = 'Send to Phone'
+var PHONE_ID = 'phone'
+var PAGE = 'page'
+var SELECTION = 'selection'
+var LINK = 'link'
+
+function onClickHandler (info, tab) {
+  var id = info.menuItemId.split(':')
+  switch (id[1]) {
+    case PAGE:
+      pasteIt.pushMessage(info.pageUrl, function (response) {
+        console.log(JSON.stringify(response))
+      })
+      break
+    case SELECTION:
+      pasteIt.pushMessage(info.selectionText, function (response) {
+        console.log(JSON.stringify(response))
+      })
+      break
+    case LINK:
+      pasteIt.pushMessage(info.linkUrl, function (response) {
+        console.log(JSON.stringify(response))
+      })
+      break
+    default:
+      console.log('Not supported')
+  }
+}
+
+chrome.contextMenus.onClicked.addListener(onClickHandler)
+
+/* Method to setup context menu items */
+function setUpContextMenu () {
+  // Create one test item for each context type.
+  var contexts = [PAGE, SELECTION, LINK]
+  for (var i = 0; i < contexts.length; i++) {
+    var context = contexts[i]
+    var title = PHONE_TITLE
+    var id = chrome.contextMenus.create({
+      'title': title,
+      'contexts': [context],
+      'id': PHONE_ID + ':' + context
+    })
+    console.log("'" + context + "' item:" + id)
+  }
+}
+
+/*
+███████ ██    ██ ███████ ███    ██ ████████     ██   ██  █████  ███    ██ ██████  ██      ███████ ██████
+██      ██    ██ ██      ████   ██    ██        ██   ██ ██   ██ ████   ██ ██   ██ ██      ██      ██   ██
+█████   ██    ██ █████   ██ ██  ██    ██        ███████ ███████ ██ ██  ██ ██   ██ ██      █████   ██████
+██       ██  ██  ██      ██  ██ ██    ██        ██   ██ ██   ██ ██  ██ ██ ██   ██ ██      ██      ██   ██
+███████   ████   ███████ ██   ████    ██        ██   ██ ██   ██ ██   ████ ██████  ███████ ███████ ██   ██
+*/
+
 // Controller for various events from Popup
 chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
-    console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension')
+    function (request, sender, sendResponse) {
+      console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension')
 
-    switch (request.command) {
-      case 'copy':
-        pasteIt.copyMessage(request.message, sendResponse)
-        break
-      case 'push':
-        pasteIt.pushMessage(request.message, sendResponse)
-        break
-      case 'isSignedIn':
-        sendResponse({
-          success: Boolean(pasteIt.auth.currentUser)
-        })
-        break
-      case 'signOut':
-        pasteIt.auth.signOut()
-        sendResponse({
-          success: Boolean(pasteIt.auth.currentUser),
-          message: 'User signed out'
-        })
-        break
-      default:
-        console.error('Request contains no command')
-    }
-  })
+      switch (request.command) {
+        case 'copy':
+          pasteIt.copyMessage(request.message, sendResponse)
+          break
+        case 'push':
+          pasteIt.pushMessage(request.message, sendResponse)
+          break
+        case 'isSignedIn':
+          sendResponse({
+            success: Boolean(pasteIt.auth.currentUser)
+          })
+          break
+        case 'signOut':
+          pasteIt.auth.signOut()
+          sendResponse({
+            success: Boolean(pasteIt.auth.currentUser),
+            message: 'User signed out'
+          })
+          break
+        default:
+          console.error('Request contains no command')
+      }
+    })
 
 window.onload = function () {
   firebase.initializeApp(config)
+  setUpContextMenu()
   initApp()
 }
 
