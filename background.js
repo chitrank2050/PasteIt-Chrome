@@ -18,12 +18,11 @@ function initApp (app) {
  ██████  ██████  ██   ████    ██    ███████ ██   ██    ██        ██      ██ ███████ ██   ████  ██████
 */
 
-var PHONE_TITLE = 'Phone'
+var PHONE_TITLE = 'Send to Phone'
 var PHONE_ID = 'phone'
 var PAGE = 'page'
 var SELECTION = 'selection'
 var LINK = 'link'
-var chromeApi = chrome
 
 function onClickHandler (info, tab) {
   var id = info.menuItemId.split(':')
@@ -48,7 +47,7 @@ function onClickHandler (info, tab) {
   }
 }
 
-chromeApi.contextMenus.onClicked.addListener(onClickHandler)
+chrome.contextMenus.onClicked.addListener(onClickHandler)
 
 /* Method to setup context menu items */
 function setUpContextMenu () {
@@ -57,7 +56,7 @@ function setUpContextMenu () {
   for (var i = 0; i < contexts.length; i++) {
     var context = contexts[i]
     var title = PHONE_TITLE
-    var id = chromeApi.contextMenus.create({
+    var id = chrome.contextMenus.create({
       'title': title,
       'contexts': [context],
       'id': PHONE_ID + ':' + context
@@ -75,7 +74,7 @@ function setUpContextMenu () {
 */
 
 // Controller for various events from Popup
-chromeApi.runtime.onMessage.addListener(
+chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
       console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension')
 
