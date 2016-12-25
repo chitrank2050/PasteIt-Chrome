@@ -30,7 +30,7 @@ PasteIt.prototype.onAuthStateChanged = function (user) {
       this.email = user.email
       this.userName = user.displayName
     } else {
-      this.email = user.uid
+      this.email = this.FAKE_EMAIL
       this.userName = this.ANONYMOUS
     }
 
@@ -99,7 +99,7 @@ PasteIt.prototype.copyMessage = function (message, sendResponse) {
     response.success = document.execCommand('Copy', false, null)
       // After copying, remove it
     document.body.removeChild(copyDiv)
-    response.message = 'Message ' + (response.success ? 'copied' : 'not copied')
+    response.message = message + (response.success ? ' copied' : ' not copied')
   } catch (e) {
     sendResponse({
       success: false,
@@ -119,7 +119,7 @@ PasteIt.prototype.loadLatestMessage = function () {
 
 /* Extract message from Firebase DataSnapShot and call copyMessage */
 PasteIt.prototype.onMessageLoadedListener = function (data) {
-  this.copyMessage(data.val().clip, function (response) {
+  this.copyMessage(data.val().text, function (response) {
     if (response.success) {
       console.log(response.message)
     } else {

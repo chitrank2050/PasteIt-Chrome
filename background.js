@@ -50,9 +50,9 @@ function onClickHandler (info, tab) {
 
 chromeApi.contextMenus.onClicked.addListener(onClickHandler)
 
-// Set up context menu tree at install time.
-chromeApi.runtime.onInstalled.addListener(function () {
-    // Create one test item for each context type.
+/* Method to setup context menu items */
+function setUpContextMenu () {
+  // Create one test item for each context type.
   var contexts = [PAGE, SELECTION, LINK]
   for (var i = 0; i < contexts.length; i++) {
     var context = contexts[i]
@@ -64,7 +64,7 @@ chromeApi.runtime.onInstalled.addListener(function () {
     })
     console.log("'" + context + "' item:" + id)
   }
-})
+}
 
 /*
 ███████ ██    ██ ███████ ███    ██ ████████     ██   ██  █████  ███    ██ ██████  ██      ███████ ██████
@@ -113,6 +113,7 @@ var config = {
 
 window.onload = function () {
   var app = firebase.initializeApp(config)
+  setUpContextMenu()
   console.log('background.js running')
   initApp(app)
 }
