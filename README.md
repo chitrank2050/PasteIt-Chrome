@@ -17,13 +17,13 @@ This project is still in infancy so any type of help is appreciated including bu
 * App Icon made by [Vectors Market](http://www.flaticon.com/authors/vectors-market) from [Flaticon](http://www.flaticon.com) is licensed by [CC 3.0](http://creativecommons.org/licenses/by/3.0/).
 
 ### Third party libraries
-* see [LIBRARIES](https://github.com/username/appname/blob/master/LIBRARIES.md) file.
+* see [LIBRARIES](https://github.com/nickdex/PasteIt-Chrome/blob/master/LIBRARIES.md) file.
 
 ## Permissions
 * No extra permissions needed.
 
 ## License
-* see [LICENSE](https://github.com/username/appname/blob/master/LICENSE.md) file.
+* see [LICENSE](https://github.com/nickdex/PasteIt-Chrome/blob/master/LICENSE.md) file.
 
 ## Contact
 #### Nikhil Warke
